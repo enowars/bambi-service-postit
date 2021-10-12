@@ -1,0 +1,17 @@
+version: '2.1'
+services:
+  postit:
+    ulimits:
+      core:
+        hard: 0
+        soft: 0
+      nproc:
+        soft: 4000
+        hard: 4000
+    build: .
+    volumes:
+      - ./data/:/data:rw
+    ports:
+      - 9000:9000
+    mem_limit: 1G
+    memswap_limit: 2G
