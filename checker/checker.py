@@ -31,7 +31,7 @@ class ForgetMeNotChecker(BaseChecker):
 	"""
 
 	flag_count = 1
-	noise_count = 0
+	noise_count = 2
 	havoc_count = 1
 	service_name = "forgetmenot"
 	port = 9122  # The port will automatically be picked up as default by self.connect and self.http.
@@ -98,11 +98,18 @@ class ForgetMeNotChecker(BaseChecker):
 		self.key = RSA.generate(1024, e = 3)
 		self.team_db['name'] = self.name
 		self.team_db['key'] = self.key.export_key()
-
+		
+		#submit user, exponent, modulus line by line
 		conn = self.connect()
 		expect_command_prompt(conn)
-		input_command = "register_user:%s:%d:%d" % (self.name, self.key.n, self.key.e)
-		conn.write(input_data.encode('utf-8') + b"\n")
+		conn.write(b'register\n')
+		expect_command_prompt(conn)
+		conn.write(self.name.encode() + b'\n')
+		expect_command_prompt(conn)
+		conn.write(str(self.key.e).encode() + b'\n')
+		expect_command_prompt(conn)
+		conn.write(str(self.key.n).encode() + b'\n')
+		expect_command_prompt(conn)
 		conn.close()
 	
 	def getflag(self):  # type: () -> None
@@ -130,24 +137,16 @@ class ForgetMeNotChecker(BaseChecker):
 
 				conn = self.connect()
 				expect_command_prompt(conn)
-				input_data = {'cmd' : 'get', 'name' : self.name}
-				msg = json.dumps(input_data)
-				conn.write(msg.encode() + b'\n')
-
-				pubkey = RSA.import_key(expect_command_prompt(conn).decode())
-				challenge = expect_command_prompt(conn).decode()
-
-				if pubkey.n != self.key.n or pubkey.e != self.key.e:
-					raise BrokenServiceException("Wrong public key")
-
+				conn.write(('login %s\n' % self.name).encode())
+				challenge = expect_command_prompt(conn).strip().splitlines()[1].split(b': ')[1]
+				m = bytes_to_long(chal)
 				#if this is bottleneck, change to fast signing, factor ~4
-				signature = pow(int(challenge,16), self.key.d, self.key.n)
+				signature = pow(bytes_to_long(challenge), self.key.d, self.key.n)
+				conn.write(('%d\n' % signature).encode())
 
-				conn.write(hexlify(long_to_bytes(signature)) + b'\n')
 				notes = expect_command_prompt(conn).decode()
 
 				if self.flag not in notes:
-					#error might be because of updated public key, so renew it
 					raise BrokenServiceException("Could not retrieve correct flag")
 
 		except EOFError:
@@ -172,35 +171,9 @@ class ForgetMeNotChecker(BaseChecker):
 		"""
 		try:
 			if self.flag_idx == 0:
-				joke = random.choice(open('jokes','r').read().split('\n\n'))
-				joke_hex = hexlify(joke.encode()).decode()
-
-				content = 'joke %s %d' % (joke_hex, self.flag_round)
-				signature = sign(content, private_key)
-
-				input_data = ('receive %s %s' % (content, signature)).encode()
-
-				conn = self.connect()
-				expect_command_prompt(conn)
-				conn.write(input_data + b"\n")
-
-				try:
-					ret = expect_command_prompt(conn).decode().strip().split(":")
-					self.debug(f"Service returned: \"{ret}\"")
-					ret_hash = ret[0]
-					joke_id = ret[1]
-				except IndexError:
-					conn.close()
-					raise BrokenServiceException("Failed to parse hash")
-
-				conn.close()
-				self.debug(f"joke-hash: {sha256(joke.encode()).hexdigest().encode()}, returned {ret_hash.strip().encode()}")
-
-				if sha256(joke.encode()).hexdigest() != ret_hash.strip():
-					raise BrokenServiceException('Returned wrong hash')
-
-				self.team_db[self.noise_key() + "joke"] = joke
-				self.team_db[self.noise_key() + "joke_id"] = joke_id
+				self.register_user()
+			if self.flag_idx == 1:
+				self.register_user()
 
 		except EOFError:
 			raise OfflineException("Encountered unexpected EOF")
@@ -222,22 +195,29 @@ class ForgetMeNotChecker(BaseChecker):
 		"""
 		try:
 			if self.flag_idx == 0:
+				try:
+					self.name = self.team_db['name']
+				except IndexError:
+					raise BrokenServiceException("Cannot find user")
+
 				conn = self.connect()
 				expect_command_prompt(conn)
-				joke_id = self.team_db[self.noise_key() + "joke_id"]
-				conn.write(f"send {joke_id}\n".encode() )
-				joke_hex = expect_command_prompt(conn).decode().strip()
-				self.debug(f"joke recieved: {joke_hex}, len {len(joke_hex)}")
-				try:
-					joke = unhexlify(joke_hex).decode()
-				except binascii.Error:
-					self.debug("failed to decode joke-hex")
-					raise BrokenServiceException("Retrieved invalid joke")
+				conn.write(b'users\n')
+				res = expect_command_prompt(conn)
+				conn.close()
+				if self.name not in res.decode().splitlines():
+					raise BrokenServiceException("User not listed")
 
-				joke_orig = self.team_db[self.noise_key() + "joke"]
-				self.debug(f"{joke_orig}, {joke}")
-				if joke != joke_orig:
-					raise BrokenServiceException("I didn't get the joke.")
+			if self.flag_idx == 1:
+				conn = self.connect()
+				expect_command_prompt(conn)
+				conn.write(('info %s\n' % self.name).encode())
+				res = expect_command_prompt(conn).decode().splitlines()
+				name = res[0].split(': ')[1]
+				e = int(res[1].split(': ')[1])
+				n = int(res[2].split(': ')[1])
+				if name != self.name or e != self.key.e or n != self.key.n:
+					raise BrokenServiceException("Wrong user data")
 
 		except EOFError:
 			raise OfflineException("Encountered unexpected EOF")
@@ -258,8 +238,11 @@ class ForgetMeNotChecker(BaseChecker):
 		"""
 		try:
 			if self.flag_idx == 0:
-				#get all users
-				pass
+				conn = self.connect()
+				expect_command_prompt(conn)
+				conn.write(b'help\n')
+				res = expect_command_prompt(conn)
+				conn.close()
 
 		except EOFError:
 			raise OfflineException("Encountered unexpected EOF")

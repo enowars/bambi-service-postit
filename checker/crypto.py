@@ -66,15 +66,15 @@ def encrypt(message : str, pubkey = None):
 		enc_key = hexlify(key).decode()
 	return '%s:%s' % (enc_flag, enc_key)
 
-def sign(message: str, RSAkey):
+def sign(message: bytes, RSAkey):
 	"""Sign message with RSA.
 	Input:
-		message : str
+		message : bytes
 		RSAkey : RSA-key, must contain fields RSAkey.d and RSAkey.n
 	Output:
-		signature : str, signature in hex-format
+		signature : int
 	"""
-	return hex(pow(bytes_to_long(sha256(message.encode()).digest()), RSAkey.d, RSAkey.n))[2:]
+	return pow(bytes_to_long(message), RSAkey.d, RSAkey.n)
 
 def verify(message: str, signature: str, RSAkey):
 	"""Verify message signed with RSA.
