@@ -49,6 +49,9 @@ init(int argc, const char **argv)
 	char *err_msg = NULL;
 	int status;
 
+	setvbuf(stdin, NULL, _IONBF, 0);
+	setvbuf(stdout, NULL, _IONBF, 0);
+
 	dbpath = "db.sqlite3";
 	if (argc > 1) dbpath = argv[1];
 

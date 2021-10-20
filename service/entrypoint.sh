@@ -1,6 +1,6 @@
 #!/bin/bash
 
-chown -R service:service "/service"
+chown -R service:service /service /data
 
 expiry=$((13*60))
 while [ 1 ]; do

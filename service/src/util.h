@@ -21,4 +21,3 @@ void assert(int res, const char *fmtstr, ...);
 
 char* ask(const char *fmtstr, ...);
 
-
