@@ -1,16 +1,17 @@
-FROM python:3.7
+FROM python:3.9-buster
 
+RUN useradd -ms /bin/bash -u 1000 checker
+
+ENV TERM=linux
+ENV TERMINFO=/etc/terminfo
+
+COPY ./src /checker
 WORKDIR /checker
+RUN chown checker -R /checker
 
-# install requirements
-COPY ./requirements.txt /checker/requirements.txt
-RUN pip3 install -r requirements.txt
+RUN apt update && DEBIAN_FRONTEND=noninteractive apt-get install libmpfr-dev libmpc-dev
 
-# copy our files in
-COPY . ./
+USER checker
+RUN python3 -m pip install --no-warn-script-location -r requirements.txt
 
-# here you might need to add more stuff
-#COPY ./checker.py ./checker.privkey ./crypto.py ./
-
-# ENTRYPOINT ["uwsgi", "--uid", "uwsgi", "--socket", "[::]:3031", "--protocol", "http", "--ini", "./uwsgi.ini"]
-ENTRYPOINT [ "gunicorn", "-c", "gunicorn.conf.py", "checker:app" ]
+ENTRYPOINT [ "/home/checker/.local/bin/gunicorn", "-c", "gunicorn.conf.py", "checker:app" ]

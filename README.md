@@ -1,9 +1,10 @@
-# bambi-service-forgetmenot
+# POSTIT
+
 Service for BambiCTF #6
 
-## Draft in German
+## Idea
 
-RSA-signatures, checked with strcmp in C
+RSA signatures, checked with strcmp in C
 
 * terminal-based "Post-Its"
 * register with name and public key
@@ -13,6 +14,8 @@ RSA-signatures, checked with strcmp in C
 	* get the public key and a token to sign
 	* if signature correct, get all messages from that user
 
-Checker only uses keys with e = 3, then can forge signatures for short messages (but not 512 bits).
-siganture = ceil((m + \x00 * foo) ^ (1/e))
+Checker only uses keys with e = 3, then can forge signatures for
+short messages (but not 512 bits).
+
+signature = ceil((m + \x00 * foo) ^ (1/e))
 When checking: signature^e = m + \x00 + ..., and strcmp accepts

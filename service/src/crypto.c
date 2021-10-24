@@ -3,12 +3,13 @@
 char*
 int_to_str(mpz_t n)
 {
-	int len;
 	char* res;
+	int len;
 
 	len = (int) mpz_sizeinbase(n, 256);
 	res = malloc(len + 1);
 	mpz_export(res, NULL, 1, 1, 0, 0, n);
+	res[len] = '\0';
 
 	return res;
 }
@@ -30,6 +31,8 @@ check_signature(const char *msg, const char *sig_str,
 
 	_msg = int_to_str(m);
 	valid = !strcmp(msg, _msg);
+
+	if (!valid) printf("%s\n", mpz_get_str(NULL, 10, m));
 
 	mpz_clear(n);
 	mpz_clear(e);

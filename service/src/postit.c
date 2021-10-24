@@ -73,7 +73,6 @@ init(int argc, const char **argv)
 		sqlite3_errmsg(db));
 
 	signal(SIGALRM, timeout);
-	alarm(120);
 
 	atexit(cleanup);
 }
@@ -149,7 +148,7 @@ api_create_user(char *username)
 	exp = strdup(ask("Enter RSA exponent: "));
 	ASSERT(exp != NULL);
 	if (!is_numstr(exp)) {
-		printf("Invalid RSA modulus\n");
+		printf("Invalid RSA exponent\n");
 		goto cleanup;
 	}
 
@@ -261,7 +260,7 @@ api_login(char *username)
 	}
 
 	exp = mod = NULL;
-	chall = randstr(32);
+	chall = randstr(16);
 	printf("Please verify your identity.\n");
 	printf("Sign this message: %s\n", chall);
 
@@ -289,10 +288,9 @@ cleanup:
 }
 
 void
-api_create_post(char *args)
+api_create_post(char *msg)
 {
 	sqlite3_stmt *res;
-	const char *msg;
 	int uid, status;
 
 	if (!current_user) {
@@ -302,8 +300,7 @@ api_create_post(char *args)
 
 	ASSERT((uid = user_id(current_user)) >= 0);
 
-	msg = ask("Enter message: ");
-	if (!*msg) {
+	if (!msg || !*msg) {
 		printf("Message can not be empty\n");
 		return;
 	}
@@ -356,7 +353,7 @@ api_list_posts(char *args)
 		sqlite3_errmsg(db));
 
 	while (sqlite3_step(res) == SQLITE_ROW)
-		printf("> %s\n", sqlite3_column_text(res, 0));
+		printf("- %s\n", sqlite3_column_text(res, 0));
 
 	sqlite3_finalize(res);
 }
@@ -417,6 +414,7 @@ main(int argc, const char **argv)
 
 	exit = 0;
 	while (!exit) {
+		alarm(120);
 		cmd = ask("\r$ ");
 		if (!*cmd) continue;
 
@@ -435,6 +433,9 @@ main(int argc, const char **argv)
 			}
 		}
 
+		if (!strcmp(cmd, "exit"))
+			break;
+
 		if (i == ARRSIZE(cmds))
 			printf("Unknown command: %s\n", cmd);
 
@@ -442,4 +443,5 @@ main(int argc, const char **argv)
 	}
 
 	printf("bye!\n");
+	sqlite3_close(db);
 }

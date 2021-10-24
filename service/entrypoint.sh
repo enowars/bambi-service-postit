@@ -2,12 +2,10 @@
 
 chown -R service:service /service /data
 
-expiry=$((13*60))
 while [ 1 ]; do
-	reftime="$(($(date +%s)-$expiry))"
-	echo "[FILE CLEANUP] @ $(date +%T)"
-	/service/cleandb "/data/db.sqlite3" "$reftime" &> /tmp/cleaner-log
-	sleep 70
+	echo "[DB CLEANUP] @ $(date +%T)"
+	/service/cleandb "/data/db.sqlite3" 2>&1 | tee /tmp/cleaner-log
+	sleep 60
 done &
 
 CMD="ncat --keep-open --listen -p 9000 --max-conns 4000 \

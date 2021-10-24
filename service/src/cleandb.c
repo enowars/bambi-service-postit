@@ -23,7 +23,7 @@ main(int argc, const char **argv)
 	ASSERTV(status == SQLITE_OK, "Cannot access database: %s",
 		sqlite3_errmsg(db));
 
-	status = sqlite3_prepare_v2(db, "SELECT uid, name, creation FROM users",
+	status = sqlite3_prepare_v2(db, "SELECT uid, name, creat FROM users",
 		-1, &user_res, NULL);
 	ASSERTV(status == SQLITE_OK, "Failed to fetch data from database: %s",
 		sqlite3_errmsg(db));
@@ -31,8 +31,8 @@ main(int argc, const char **argv)
 	now = time(NULL);
 
 	while (sqlite3_step(user_res) == SQLITE_ROW) {
-		uid = sqlite3_column_int(user_res, 2);
-		creat = sqlite3_column_int(user_res, 3);
+		uid = sqlite3_column_int(user_res, 0);
+		creat = sqlite3_column_int(user_res, 2);
 
 		if (now - creat < 60 * 12)
 			continue;
@@ -71,5 +71,6 @@ main(int argc, const char **argv)
 	}
 
 	sqlite3_finalize(user_res);
+	sqlite3_close(db);
 }
 

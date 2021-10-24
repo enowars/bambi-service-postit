@@ -1,21 +1,40 @@
-version: '3'
+version: '2.1'
 
 services:
-  cry_store-backend:
+  postit-checker:
     build: .
     ports:
-      - 8005:3031
+      - 9338:3031
     environment:
-     - MONGO_ENABLED=1
-     - MONGO_HOST=cry_store-db
-     - MONGO_PORT=27017
-     - MONGO_USER=ipv6islove
-     - MONGO_PASSWORD=dockerislove
-
-  cry_store-db:
+      - MONGO_ENABLED=1
+      - MONGO_HOST=postit-mongo
+      - MONGO_PORT=27017
+      - MONGO_USER=postit_mongo
+      - MONGO_PASSWORD=postit_mongo
+    mem_limit: 1G
+    memswap_limit: 2G
+    ulimits:
+      core:
+        soft: 0
+        hard: 0
+      nproc:
+        soft: 4000
+        hard: 4000
+  postit-mongo:
     image: mongo
+    ports:
+      - 27017:27017
     volumes:
-      - ./cry_store_db_data:/data/db
+      - ./data:/data/db
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ipv6islove
-      MONGO_INITDB_ROOT_PASSWORD: dockerislove
+      MONGO_INITDB_ROOT_USERNAME: postit_mongo
+      MONGO_INITDB_ROOT_PASSWORD: postit_mongo
+    mem_limit: 1G
+    memswap_limit: 2G
+    ulimits:
+      core:
+        soft: 0
+        hard: 0
+      nproc:
+        soft: 4000
+        hard: 4000
