@@ -30,13 +30,6 @@ FAIL = 1
 prompt = b"\r$ "
 
 
-class _Enochecker(Enochecker):
-    async def _init(self) -> None:
-        count = 30
-        gen_keys(count, lambda x: self._logger.debug(f"Generated RSA key {x}/{count}"))
-        await super()._init()
-
-
 class Session:
     def __init__(self, socket: AsyncSocket, logger: LoggerAdapter) -> None:
         socket_tuple = cast(tuple[StreamReader, StreamWriter], socket)
@@ -110,6 +103,13 @@ class Session:
         self.closed = True
         self.writer.close()
         await self.writer.wait_closed()
+
+
+class _Enochecker(Enochecker):
+    async def _init(self) -> None:
+        count = 30
+        gen_keys(count, lambda x: self._logger.debug(f"Generated RSA key {x}/{count}"))
+        await super()._init()
 
 
 checker = _Enochecker("postit", 9337)

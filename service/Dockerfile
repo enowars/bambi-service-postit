@@ -11,7 +11,7 @@ RUN chmod 755 /entrypoint.sh
 
 COPY src/ /service
 RUN make -C /service clean && make -C /service
-RUN chmod +x /service/postit /service/cleandb
+RUN chmod +x /service/postit /service/cleandb /service/gendb
 WORKDIR /service/
 
 EXPOSE 9000

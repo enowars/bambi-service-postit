@@ -2,12 +2,19 @@
 
 chown -R service:service /service /data
 
+runas() {
+    su -s /bin/sh -c "$2" "$1"
+}
+
+if [ ! -e "/data/db.sqlite3" ]; then
+    runas service "/service/gendb /data/db.sqlite3"
+fi
+
 while [ 1 ]; do
 	echo "[DB CLEANUP] @ $(date +%T)"
-	/service/cleandb "/data/db.sqlite3" 2>&1 | tee /tmp/cleaner-log
+	runas service "/service/cleandb /data/db.sqlite3"
 	sleep 60
 done &
 
-CMD="ncat --keep-open --listen -p 9000 --max-conns 4000 \
---no-shutdown --wait 10s --sh-exec '/service/postit /data/db.sqlite3'"
-su -s /bin/sh -c "$CMD" service
+runas service "ncat --keep-open --listen -p 9000 --no-shutdown\
+    --wait 10s --sh-exec '/service/postit /data/db.sqlite3'"

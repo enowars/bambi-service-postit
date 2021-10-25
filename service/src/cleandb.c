@@ -23,6 +23,10 @@ main(int argc, const char **argv)
 	ASSERTV(status == SQLITE_OK, "Cannot access database: %s",
 		sqlite3_errmsg(db));
 
+	status = sqlite3_busy_timeout(db, 10000);
+	ASSERTV(status == SQLITE_OK, "Failed to set busy timeout: %s",
+		sqlite3_errmsg(db));
+
 	status = sqlite3_prepare_v2(db, "SELECT uid, name, creat FROM users",
 		-1, &user_res, NULL);
 	ASSERTV(status == SQLITE_OK, "Failed to fetch data from database: %s",

@@ -59,6 +59,10 @@ init(int argc, const char **argv)
 	ASSERTV(status == SQLITE_OK, "Cannot access database: %s",
 		sqlite3_errmsg(db));
 
+	status = sqlite3_busy_timeout(db, 10000);
+	ASSERTV(status == SQLITE_OK, "Failed to set busy timeout: %s",
+		sqlite3_errmsg);
+
 	sql = "CREATE TABLE IF NOT EXISTS users(uid INTEGER PRIMARY KEY,"
 		" name TEXT, mod TEXT, exp TEXT, creat INTEGER);";
 	status = sqlite3_exec(db, sql, 0, 0, NULL);
@@ -69,7 +73,7 @@ init(int argc, const char **argv)
 		" uid INTEGER SECONDARY KEY, text TEXT,"
 		" creat INTEGER);";
 	status = sqlite3_exec(db, sql, 0, 0, NULL);
-	ASSERTV(status == SQLITE_OK, "Failed to create users table: %s",
+	ASSERTV(status == SQLITE_OK, "Failed to create posts table: %s",
 		sqlite3_errmsg(db));
 
 	signal(SIGALRM, timeout);
