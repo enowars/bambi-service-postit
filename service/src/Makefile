@@ -1,4 +1,4 @@
-CFLAGS = -g
+CFLAGS =
 LDLIBS = -lsqlite3 -lgmp
 
 .PHONY: all clean
@@ -6,10 +6,8 @@ LDLIBS = -lsqlite3 -lgmp
 all: postit cleandb
 
 clean:
-	rm postit cleandb
+	rm -f postit cleandb
 
 postit: postit.c util.c crypto.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LDLIBS)
 
 cleandb: cleandb.c util.c
-	$(CC) -o $@ $^ $(CFLAGS) $(LDLIBS)
