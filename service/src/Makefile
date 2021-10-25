@@ -6,7 +6,7 @@ LDLIBS = -lsqlite3 -lgmp
 all: postit cleandb gendb
 
 clean:
-	rm postit cleandb
+	rm -f postit cleandb gendb
 
 postit: postit.c util.c crypto.c
 
