@@ -32,8 +32,6 @@ check_signature(const char *msg, const char *sig_str,
 	_msg = int_to_str(m);
 	valid = !strcmp(msg, _msg);
 
-	if (!valid) printf("%s\n", mpz_get_str(NULL, 10, m));
-
 	mpz_clear(n);
 	mpz_clear(e);
 	mpz_clear(sig);
