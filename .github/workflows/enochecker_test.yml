@@ -21,8 +21,8 @@ jobs:
       - name: Test checker style
         run: |
           cd checker
-          apt update
-          DEBIAN_FRONTEND=noninteractive apt-get install libmpfr-dev libmpc-dev
+          sudo apt update
+          DEBIAN_FRONTEND=noninteractive sudo apt-get install libmpfr-dev libmpc-dev
           pip install -r src/requirements.txt
           pip install -r dev-requirements.txt
           make lint

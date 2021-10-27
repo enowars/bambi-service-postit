@@ -269,7 +269,7 @@ async def add_post(session: Session, msg: bytes, expect: int = OK) -> int:
         if expect == FAIL:
             return FAIL
         session.logger.critical(
-            f"Added post {msg!r} for user {username!r} is missing from post list\n"
+            f"Previously added post {msg!r} is missing from post list {posts!r}\n"
         )
         raise MumbleException("Post creation not working properly")
 
