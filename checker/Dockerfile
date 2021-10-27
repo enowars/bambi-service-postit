@@ -9,8 +9,6 @@ COPY ./src /checker
 WORKDIR /checker
 RUN chown checker -R /checker
 
-RUN apt update && DEBIAN_FRONTEND=noninteractive apt-get install libmpfr-dev libmpc-dev
-
 USER checker
 RUN python3 -m pip install --no-warn-script-location -r requirements.txt
 
