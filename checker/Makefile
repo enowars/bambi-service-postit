@@ -1,6 +1,6 @@
 .PHONY: all lint diff format
 
-all: format test
+all: format
 
 lint:
 	python3 -m black --check src

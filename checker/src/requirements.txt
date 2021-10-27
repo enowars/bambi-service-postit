@@ -1,5 +1,5 @@
 gmpy2==2.0.8
-enochecker3==0.5.0
+enochecker3
 pycryptodome==3.11.0
 uvicorn==0.14.0
 gunicorn==20.1.0
