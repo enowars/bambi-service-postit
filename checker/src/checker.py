@@ -21,7 +21,7 @@ from enochecker3 import (
     PutnoiseCheckerTaskMessage,
 )
 
-from crypto import RSA, fake_sign, gen_keys, get_key, sign
+from crypto import RSA, fake_sign, get_key, load_keys, sign
 from util import gen_noise, gen_username, timed
 
 OK = 0
@@ -107,8 +107,7 @@ class Session:
 
 class _Enochecker(Enochecker):
     async def _init(self) -> None:
-        count = 30
-        gen_keys(count, lambda x: self._logger.debug(f"Generated RSA key {x}/{count}"))
+        load_keys()
         await super()._init()
 
 
@@ -262,6 +261,16 @@ async def add_post(session: Session, msg: bytes, expect: int = OK) -> int:
         if expect == FAIL:
             return FAIL
         session.logger.critical(f"Unexpected response for post creation:\n{resp!r}")
+        raise MumbleException("Post creation not working properly")
+
+    _, posts = await get_posts(session)
+    assert posts is not None
+    if msg not in posts:
+        if expect == FAIL:
+            return FAIL
+        session.logger.critical(
+            f"Added post {msg!r} for user {username!r} is missing from post list\n"
+        )
         raise MumbleException("Post creation not working properly")
 
     return OK

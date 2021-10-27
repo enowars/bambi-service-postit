@@ -3,6 +3,8 @@ version: '2.1'
 services:
   postit-checker:
     build: .
+    volumes:
+      - ./keys:/checker/keys
     ports:
       - 9338:3031
     environment:

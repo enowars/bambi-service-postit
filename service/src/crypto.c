@@ -1,4 +1,5 @@
 #include "crypto.h"
+#include "util.h"
 
 char*
 int_to_str(mpz_t n)
@@ -8,6 +9,7 @@ int_to_str(mpz_t n)
 
 	len = (int) mpz_sizeinbase(n, 256);
 	res = malloc(len + 1);
+	ASSERT(res != NULL);
 	mpz_export(res, NULL, 1, 1, 0, 0, n);
 	res[len] = '\0';
 
@@ -36,6 +38,7 @@ check_signature(const char *msg, const char *sig_str,
 	mpz_clear(e);
 	mpz_clear(sig);
 	mpz_clear(m);
+	free(_msg);
 
 	return valid;
 }

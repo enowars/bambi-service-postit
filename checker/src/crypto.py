@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
 import random
-from typing import Callable, List, Tuple
+from os import listdir
+from typing import List, Tuple
 
-from Crypto.PublicKey import RSA as CryptoRSA
 from gmpy2 import iroot, mpz  # type: ignore
 
 from util import bytes2int, int2bytes
@@ -25,12 +25,11 @@ class RSA:
         return cls((int(params[0]), int(params[1]), int(params[2])))
 
 
-def gen_keys(count: int, callback: Callable[[int], None]) -> None:
-    assert count > 0
-    for i in range(count):
-        rsa = CryptoRSA.generate(1024, e=3)
-        keys.append(RSA((rsa.e, rsa.d, rsa.n)))
-        callback(i + 1)
+def load_keys() -> None:
+    for file in listdir("keys"):
+        params = tuple(int(v) for v in open(f"keys/{file}").read().split())
+        keys.append(RSA((params[0], params[1], params[2])))
+    assert len(keys) > 0
 
 
 def get_key() -> "RSA":

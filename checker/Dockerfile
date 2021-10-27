@@ -5,6 +5,8 @@ RUN useradd -ms /bin/bash -u 1000 checker
 ENV TERM=linux
 ENV TERMINFO=/etc/terminfo
 
+RUN apt update && DEBIAN_FRONTEND=noninteractive apt-get install libmpfr-dev libmpc-dev
+
 COPY ./src /checker
 WORKDIR /checker
 RUN chown checker -R /checker
