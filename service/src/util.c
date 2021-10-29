@@ -51,7 +51,7 @@ assert(int res, const char *fmtstr, ...)
 char*
 ask(const char *fmtstr, ...)
 {
-	static char buf[1024];
+	static char buf[2048];
 	va_list ap;
 	char *tok;
 

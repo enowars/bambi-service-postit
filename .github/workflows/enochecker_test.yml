@@ -42,12 +42,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install enochecker-test
-      - name: Gen checker keys
-        run: |
-          python3 -m pip install pycryptodome==3.11.0
-          cd checker
-          mkdir keys
-          python3 gen_keys.py 10
       - name: Start service
         run: |
           cd service
