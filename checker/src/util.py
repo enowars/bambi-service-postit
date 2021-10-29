@@ -6,6 +6,7 @@ import string
 import time
 from base64 import b64encode
 from logging import LoggerAdapter
+from os import path
 from typing import Any
 
 leetconv = {
@@ -20,9 +21,10 @@ leetconv = {
     "T": "7",
 }
 
-wordlist = open("media/wordlist").read().replace(" ", "").split("\n")
+srcdir = path.dirname(path.abspath(__file__))
+wordlist = open(f"{srcdir}/media/wordlist").read().replace(" ", "").split("\n")
 names = [line for line in wordlist if line != ""]
-rickroll = open("media/rickroll.b64").read().replace("\n", "")
+rickroll = open(f"{srcdir}/media/rickroll.b64").read().replace("\n", "")
 messages = [
     "Remember: invite Paul to lan party",
     "Shopping list: tomatoes and potatoes",

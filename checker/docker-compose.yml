@@ -13,6 +13,7 @@ services:
       - MONGO_PORT=27017
       - MONGO_USER=postit_mongo
       - MONGO_PASSWORD=postit_mongo
+      - CI_RUNNER=${CI_RUNNER}
     mem_limit: 1G
     memswap_limit: 2G
     ulimits:
