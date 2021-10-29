@@ -33,6 +33,10 @@ messages = [
     "🤡 The flag is in another castle! 🤡",
     "🧠 solving crypto challenges calculator 🧠",
 ]
+gplmsg = "You should have received a copy of the GNU \
+General Public License along with this file; if not, \
+write to the Free Software Foundation, Inc., 51 Franklin St, \
+Fifth Floor, Boston, MA 02110-1301 USA"
 
 
 def randint(low: int, high: int) -> int:
@@ -80,11 +84,13 @@ def gen_username() -> bytes:
 
 
 def gen_noise() -> bytes:
-    selection = randint(0, len(messages) + 1)
+    selection = randint(0, len(messages) + 2)
     if selection == 0:
         msg = randstr(randint(30, 60))
     elif selection == 1:
         msg = rickroll
+    elif selection == 2:
+        msg = gplmsg
     else:
         msg = secrets.choice(messages)
         if randbool():

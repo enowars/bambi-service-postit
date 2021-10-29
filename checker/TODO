@@ -1,4 +1,0 @@
-* create methods for username generation, crypto pair generation
-* put checker funcs that are self-explanatory into util.py
-* second flagstore for exponents larger than 3, have to find inverse mod (harder)
-* make sure all checker error are of correct type (unreachable should be offline not mumble, smth like that)
