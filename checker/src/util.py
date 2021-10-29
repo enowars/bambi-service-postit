@@ -20,9 +20,9 @@ leetconv = {
     "T": "7",
 }
 
-wordlist = open("media/wordlist").read().split("\n")
+wordlist = open("media/wordlist").read().replace(" ", "").split("\n")
 names = [line for line in wordlist if line != ""]
-rickroll = open("media/rickroll.b64").read()
+rickroll = open("media/rickroll.b64").read().replace("\n", "")
 messages = [
     "Remember: invite Paul to lan party",
     "Shopping list: tomatoes and potatoes",
@@ -48,7 +48,8 @@ def randbool() -> bool:
 
 
 def randstr(n: int) -> str:
-    chars = [secrets.choice(string.ascii_letters + string.digits) for i in range(n)]
+    alphabet = string.ascii_letters + string.digits
+    chars = [secrets.choice(alphabet) for i in range(n)]
     return "".join(chars)
 
 

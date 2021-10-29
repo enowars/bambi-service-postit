@@ -7,10 +7,9 @@ from Crypto.PublicKey import RSA
 from sys import argv
 from os import listdir
 
-count = 100
+count = 500
 
 files = listdir("keys")
-print(files)
 for i in range(len(files), count):
     with open(f"keys/{i}.rsa", "w+") as f:
         print(f"\rGenerating key {i+1}/{count}", end="")
