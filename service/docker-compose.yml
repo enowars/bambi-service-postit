@@ -10,7 +10,7 @@ services:
         hard: 4000
     build: .
     volumes:
-      - ./data/:/data:rw
+      - ./data/:/service/data:rw
     ports:
       - 9337:9000
     mem_limit: 1G
