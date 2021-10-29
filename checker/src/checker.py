@@ -35,9 +35,8 @@ class Session:
         socket_tuple = cast(tuple[StreamReader, StreamWriter], socket)
         self.reader = socket_tuple[0]
         self.writer = socket_tuple[1]
+        self.reader._limit = 2 ** 20  # type: ignore
         self.logger = logger
-        # TODO: set prefix per session if objects not shared
-        # TODO: add set_task for task information in logging output
         self.closed = False
 
     async def __aenter__(self) -> "Session":

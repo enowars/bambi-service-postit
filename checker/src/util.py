@@ -33,7 +33,7 @@ messages = [
     "Crypto makes me go 🥴🤢🤮",
     "RSA, more like (R)eal (S)Bad (A)Crypto",
     "🤡 The flag is in another castle! 🤡",
-    "🧠 solving crypto challenges calculator 🧠",
+    "🧠 solving crypto challenges with a calculator 🧠",
 ]
 gplmsg = "You should have received a copy of the GNU \
 General Public License along with this file; if not, \
