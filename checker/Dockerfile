@@ -12,9 +12,10 @@ RUN chmod +x /entrypoint.sh
 
 COPY ./src /checker
 WORKDIR /checker
-RUN chown checker -R /checker
+RUN chown -R checker:checker /checker
 
 USER checker
 RUN python3 -m pip install --no-warn-script-location -r requirements.txt
 
-ENTRYPOINT [ "/entrypoint.sh" ]
+USER root
+ENTRYPOINT [ "sh", "-c", "chmod -R 777 /checker && su -c /entrypoint.sh checker" ]

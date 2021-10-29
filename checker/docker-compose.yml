@@ -25,7 +25,7 @@ services:
   postit-mongo:
     image: mongo
     volumes:
-      - ./data:/data/db
+      - ./data:/data/db:rw
     environment:
       MONGO_INITDB_ROOT_USERNAME: postit_mongo
       MONGO_INITDB_ROOT_PASSWORD: postit_mongo
